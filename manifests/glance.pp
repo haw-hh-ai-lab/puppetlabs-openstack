@@ -40,6 +40,7 @@ class openstack::glance (
   $glance_db_user       = 'glance',
   $glance_db_dbname     = 'glance',
   $verbose              = 'False',
+  $rabbit_password      = 'changeme',
   $enabled              = true
 ) {
 
@@ -57,7 +58,7 @@ class openstack::glance (
     auth_type         => 'keystone',
     auth_port         => '35357',
     auth_host         => $keystone_host,
-    keystone_tenant   => 'services',
+    keystone_tenant   => 'service',
     keystone_user     => 'glance',
     keystone_password => $glance_user_password,
     sql_connection    => $sql_connection,
@@ -71,7 +72,7 @@ class openstack::glance (
     auth_host         => $keystone_host,
     auth_port         => '35357',
     auth_type         => 'keystone',
-    keystone_tenant   => 'services',
+    keystone_tenant   => 'service',
     keystone_user     => 'glance',
     keystone_password => $glance_user_password,
     sql_connection    => $sql_connection,
@@ -80,5 +81,9 @@ class openstack::glance (
 
   # Configure file storage backend
   class { 'glance::backend::file': }
+
+  class { 'glance::notify::rabbitmq':
+    rabbit_password => $rabbit_password,
+  }
 
 }
